@@ -4,13 +4,15 @@ import FilterTempate from '../view/list-filter-view.js';
 import ListEventsTempate from '../view/list-events-view.js';
 import SortTempate from '../view/list-sort-view.js';
 import EventTempate from '../view/event-view.js';
-// import NewEventTempate from '../view/new-event-view.js';
 import EditingEventTempate from '../view/editing-event-view.js';
+// import NewEventTempate from '../view/new-event-view.js';
+
+import PointModel from '../model/point-model.js';
 
 
 import {render} from '../render.js';
+import {getRandomArrayElement} from '../utils.js';
 
-const eventCounts = 3;
 
 const siteHeaderElement = document.querySelector('.page-header');
 
@@ -22,19 +24,24 @@ export default class Presenter {
 
   constructor({eventContainer}) {
     this.eventContainer = eventContainer;
+    this.pointModel = new PointModel();
   }
 
   init() {
+    this.pointList = [...this.pointModel.getPoints()];
+
     render(new FilterTempate(), siteFiltersElement);
     render(new InfoTempate(), siteInfoElement, 'afterbegin');
 
     render(new SortTempate, this.eventContainer);
     render(this.eventListComponent, this.eventContainer);
-    render(new EditingEventTempate(), this.eventListComponent.getElement(), 'afterbegin');
+
+    render(new EditingEventTempate({point:getRandomArrayElement(this.pointList)}), this.eventListComponent.getElement(), 'afterbegin');
     // render(new NewEventTempate(), this.eventListComponent.getElement());
 
-    for (let i = 0; i < eventCounts; i++) {
-      render(new EventTempate(), this.eventListComponent.getElement());
+
+    for (let i = 0; i < this.pointList.length; i++) {
+      render(new EventTempate({point: this.pointList[i]}), this.eventListComponent.getElement());
     }
   }
 }
