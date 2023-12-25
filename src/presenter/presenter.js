@@ -4,13 +4,14 @@ import FilterTempate from '../view/list-filter-view.js';
 import ListEventsTempate from '../view/list-events-view.js';
 import SortTempate from '../view/list-sort-view.js';
 import EventTempate from '../view/event-view.js';
-// import EditingEventTempate from '../view/editing-event-view.js';
+import EditingEventTempate from '../view/editing-event-view.js';
 // import NewEventTempate from '../view/new-event-view.js';
 
 import PointModel from '../model/point-model.js';
 
 
 import {render} from '../render.js';
+import {getRandomArrayElement} from '../utils.js';
 
 
 const siteHeaderElement = document.querySelector('.page-header');
@@ -34,7 +35,8 @@ export default class Presenter {
 
     render(new SortTempate, this.eventContainer);
     render(this.eventListComponent, this.eventContainer);
-    // render(new EditingEventTempate(), this.eventListComponent.getElement(), 'afterbegin');
+
+    render(new EditingEventTempate({point:getRandomArrayElement(this.pointList)}), this.eventListComponent.getElement(), 'afterbegin');
     // render(new NewEventTempate(), this.eventListComponent.getElement());
 
 

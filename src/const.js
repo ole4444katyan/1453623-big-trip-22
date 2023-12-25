@@ -1,4 +1,4 @@
-const TYPE = [
+const TYPES = [
   'Taxi',
   'Bus',
   'Train',
@@ -47,11 +47,12 @@ const PRICE = {
 const DATE_FORMAT = {
   shortDate: 'D MMM',
   time: 'HH:mm',
+  slashDate: 'DD/MM/YY HH:mm',
 };
 
 
 export {
-  TYPE,
+  TYPES,
   DESCRIPTIONS,
   CITIES,
   OFFERS,
