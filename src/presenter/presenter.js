@@ -1,47 +1,55 @@
-import InfoTempate from '../view/info-view.js';
-import FilterTempate from '../view/list-filter-view.js';
+// views
+import InfoView from '../view/info-view.js';
+import FilterView from '../view/list-filter-view.js';
 
-import ListEventsTempate from '../view/list-events-view.js';
-import SortTempate from '../view/list-sort-view.js';
-import EventTempate from '../view/event-view.js';
-import EditingEventTempate from '../view/editing-event-view.js';
-// import NewEventTempate from '../view/new-event-view.js';
+import ListPointsView from '../view/list-points-view.js';
+import SortView from '../view/list-sort-view.js';
+import PointView from '../view/point-view.js';
+import EditingPointView from '../view/editing-point-view.js';
 
-import PointModel from '../model/point-model.js';
-
-
+// utils
 import {render} from '../render.js';
 import {getRandomArrayElement} from '../utils.js';
 
 
 const siteHeaderElement = document.querySelector('.page-header');
-
 const siteFiltersElement = siteHeaderElement.querySelector('.trip-main__trip-controls');
 const siteInfoElement = siteHeaderElement.querySelector('.trip-main');
 
 export default class Presenter {
-  eventListComponent = new ListEventsTempate();
+  pointListComponent = new ListPointsView();
 
-  constructor({eventContainer}) {
-    this.eventContainer = eventContainer;
-    this.pointModel = new PointModel();
+  constructor({pointsContainer, pointsModel, destinationsModel, offersModel}) {
+    this.pointsContainer = pointsContainer;
+    this.points = pointsModel.get();
+    this.destinationModel = destinationsModel;
+    // this.destinations = destinationsModel.get();
+    this.offers = offersModel;
   }
 
   init() {
-    this.pointList = [...this.pointModel.getPoints()];
 
-    render(new FilterTempate(), siteFiltersElement);
-    render(new InfoTempate(), siteInfoElement, 'afterbegin');
+    render(new FilterView(), siteFiltersElement);
+    render(new InfoView(), siteInfoElement, 'afterbegin');
 
-    render(new SortTempate, this.eventContainer);
-    render(this.eventListComponent, this.eventContainer);
+    render(new SortView, this.pointsContainer);
+    render(this.pointListComponent, this.pointsContainer);
 
-    render(new EditingEventTempate({point:getRandomArrayElement(this.pointList)}), this.eventListComponent.getElement(), 'afterbegin');
-    // render(new NewEventTempate(), this.eventListComponent.getElement());
+    const randomEditingPoint = getRandomArrayElement(this.points);
 
 
-    for (let i = 0; i < this.pointList.length; i++) {
-      render(new EventTempate({point: this.pointList[i]}), this.eventListComponent.getElement());
+    render(new EditingPointView({
+      point: randomEditingPoint,
+      pointDestinations: this.destinationModel.getById(randomEditingPoint.destination),
+      pointOffers: this.offers.getByType(randomEditingPoint.type)
+    }), this.pointListComponent.getElement(), 'afterbegin');
+
+    for (let i = 0; i < this.points.length; i++) {
+      render(new PointView({
+        point: this.points[i],
+        pointDestinations: this.destinationModel.getById(this.points[i].destination),
+        pointOffers: this.offers.getByType(this.points[i].type)
+      }), this.pointListComponent.getElement());
     }
   }
 }

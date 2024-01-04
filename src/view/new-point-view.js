@@ -1,6 +1,6 @@
 import {createElement} from '../render.js';
 
-function createNewEventTemplate () {
+function createNewPointTemplate () {
 
   return (
     `<li class="trip-events__item">
@@ -168,9 +168,9 @@ function createNewEventTemplate () {
   );
 }
 
-export default class NewEventTempate {
+export default class NewPointView {
   getTemplate() {
-    return createNewEventTemplate();
+    return createNewPointTemplate();
   }
 
   getElement() {

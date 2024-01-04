@@ -1,49 +1,49 @@
+/* eslint-disable camelcase */
 import {createElement} from '../render.js';
-import {humanizeTime, getRandomFromRange} from '../utils.js';
-import {DATE_FORMAT, CITIES, TYPES, OFFERS, PRICE} from '../const.js';
+import {
+  slashDateHumanize,
+} from '../utils.js';
+import {CITIES, TYPES,} from '../const.js';
 
-function createDestinationOption (places) {
-  let destinationOption = '';
-  for (let i = 0; i < places.length; i++) {
-    destinationOption += `<option value="${places[i]}"></option>`;
-  }
-  return destinationOption;
+function createDestinationsTemplate (places) {
+  return (`${
+    places.map(
+      (place) => `<option value="${place}"></option>`
+    ).join('')
+  }`);
 }
 
-function createTypeOption (types) {
-  let typesOption = '';
-  for (let i = 0; i < types.length; i++) {
-    const typeLowerCase = types[i].toLowerCase();
-
-    typesOption += `<div class="event__type-item">
-    <input id="event-type-${typeLowerCase}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${typeLowerCase}">
-    <label class="event__type-label  event__type-label--${typeLowerCase}" for="event-type-${typeLowerCase}-1">${types[i]}</label>
-    </div>`;
-  }
-  return typesOption;
+function createTypeTemplate (types, currentType) {
+  return (`${
+    types.map(
+      (type) => `<div class="event__type-item">
+        <input id="event-type-${type.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type"
+        value="${type.toLowerCase()}" ${currentType === type ? 'checked' : ''}>
+        <label class="event__type-label  event__type-label--${type.toLowerCase()}" for="event-type-${type.toLowerCase()}-1">${type}</label>
+      </div>`
+    ).join('')
+  }`);
 }
 
-function createOfferSelector (offers, price, isChecked) {
-  const {min, max} = price;
-  const checked = isChecked ? 'checked' : '';
-  let typesOffer = '';
-  for (let i = 0; i < offers.length; i++) {
-    typesOffer += `<div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage" ${checked}>
+function createOffersTemplate (offers) {
+  return (`${
+    offers.map(
+      (offer, index) => `<div class="event__offer-selector">
+      <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-${index + 1}" type="checkbox" name="event-offer-luggage"
+      ${index === 0 ? 'checked' : ''}>
       <label class="event__offer-label" for="event-offer-luggage-1">
-        <span class="event__offer-title">${offers[i]}</span>
+        <span class="event__offer-title">${offer.title}</span>
         &plus;&euro;&nbsp;
-        <span class="event__offer-price">${getRandomFromRange(min, max)}</span>
+        <span class="event__offer-price">${offer.price}</span>
       </label>
-    </div>`;
-  }
-  return typesOffer;
+    </div>`
+    ).join('')
+  }`);
 }
 
-function createEditingEventTemplate (point) {
-  const {type, place, startTime, endTime, price, description} = point;
-  const startDateHumanize = humanizeTime(startTime, DATE_FORMAT.slashDate);
-  const endDateHumanize = humanizeTime(endTime, DATE_FORMAT.slashDate);
+function createEditingPointTemplate ({point, pointDestinations, pointOffers}) {
+  const {base_price, date_from, date_to, type} = point;
+  const {name, description} = pointDestinations;
 
 
   return (
@@ -59,7 +59,7 @@ function createEditingEventTemplate (point) {
             <div class="event__type-list">
               <fieldset class="event__type-group">
                 <legend class="visually-hidden">Event type</legend>
-                ${createTypeOption(TYPES)}
+                ${createTypeTemplate(TYPES, type)}
               </fieldset>
             </div>
           </div>
@@ -67,24 +67,24 @@ function createEditingEventTemplate (point) {
             <label class="event__label  event__type-output" for="event-destination-1">
               ${type}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${place}" list="destination-list-1">
+            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${name}" list="destination-list-1">
             <datalist id="destination-list-1">
-              ${createDestinationOption(CITIES)}
+              ${createDestinationsTemplate(CITIES)}
             </datalist>
           </div>
           <div class="event__field-group  event__field-group--time">
             <label class="visually-hidden" for="event-start-time-1">From</label>
-            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startDateHumanize}">
+            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${slashDateHumanize(date_from)}">
             &mdash;
             <label class="visually-hidden" for="event-end-time-1">To</label>
-            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endDateHumanize}">
+            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${slashDateHumanize(date_to)}">
           </div>
           <div class="event__field-group  event__field-group--price">
             <label class="event__label" for="event-price-1">
               <span class="visually-hidden">Price</span>
               &euro;
             </label>
-            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
+            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${base_price}">
           </div>
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
           <button class="event__reset-btn" type="reset">Delete</button>
@@ -96,12 +96,12 @@ function createEditingEventTemplate (point) {
           <section class="event__section  event__section--offers">
             <h3 class="event__section-title  event__section-title--offers">Offers</h3>
             <div class="event__available-offers">
-            ${createOfferSelector(OFFERS, PRICE, false)}
+            ${pointOffers ? createOffersTemplate(pointOffers) : ''}
             </div>
           </section>
           <section class="event__section  event__section--destination">
             <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-            <p class="event__destination-description">${description}</p>
+            <p class="event__destination-description">${name} ${description.toLowerCase()}</p>
           </section>
         </section>
       </form>
@@ -109,14 +109,20 @@ function createEditingEventTemplate (point) {
   );
 }
 
-export default class EditingEventTempate {
+export default class EditingPointView {
 
-  constructor ({point}) {
+  constructor({point, pointDestinations, pointOffers}) {
     this.point = point;
+    this.pointDestinations = pointDestinations;
+    this.pointOffers = pointOffers;
   }
 
   getTemplate() {
-    return createEditingEventTemplate(this.point);
+    return createEditingPointTemplate({
+      point: this.point,
+      pointDestinations: this.pointDestinations,
+      pointOffers: this.pointOffers
+    });
   }
 
   getElement() {

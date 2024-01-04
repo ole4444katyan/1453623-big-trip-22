@@ -27,7 +27,7 @@ function createSortTemplate () {
   );
 }
 
-export default class SortTempate {
+export default class SortView {
   getTemplate() {
     return createSortTemplate();
   }

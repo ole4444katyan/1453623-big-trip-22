@@ -1,7 +1,9 @@
 import dayjs from 'dayjs';
+import {DATE_FORMAT} from './const.js';
 
 const MS_IN_DAY = 86400000;
 const MS_IN_HOUR = 3600000;
+
 
 function getRandomFromRange (min, max) {
   min = Math.ceil(min);
@@ -17,6 +19,21 @@ function humanizeTime (timePoint, format) {
   return timePoint ? dayjs(timePoint).format(format) : '';
 }
 
+function shortDateHumanize (date) {
+  return humanizeTime(date, DATE_FORMAT.shortDate);
+}
+
+function timeHumanize (time) {
+  return humanizeTime(time, DATE_FORMAT.time);
+}
+
+function datetimeHumanize (date) {
+  return humanizeTime(date, DATE_FORMAT.datetime);
+}
+
+function slashDateHumanize (date) {
+  return humanizeTime(date, DATE_FORMAT.slashDate);
+}
 
 function durationEvent (startTime, endTime) {
   const duration = dayjs(endTime).diff(startTime);
@@ -30,4 +47,30 @@ function durationEvent (startTime, endTime) {
   return dayjs(duration).format(timeFormat);
 }
 
-export {getRandomArrayElement, getRandomFromRange, durationEvent, humanizeTime};
+function createUniqueId (min, max) {
+  const previousValues = [];
+
+  return function () {
+    let currentValue = getRandomFromRange(min, max);
+
+    while (previousValues.includes(currentValue)) {
+      currentValue = getRandomFromRange(min, max);
+    }
+
+    previousValues.push(currentValue);
+    return currentValue;
+  };
+}
+
+
+export {
+  getRandomArrayElement,
+  getRandomFromRange,
+  durationEvent,
+  humanizeTime,
+  createUniqueId,
+  shortDateHumanize,
+  timeHumanize,
+  datetimeHumanize,
+  slashDateHumanize,
+};

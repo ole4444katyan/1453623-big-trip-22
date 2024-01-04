@@ -15,7 +15,7 @@ function createInfoTemplate () {
   );
 }
 
-export default class InfoTempate {
+export default class InfoView {
   getTemplate() {
     return createInfoTemplate();
   }

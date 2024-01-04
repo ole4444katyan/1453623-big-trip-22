@@ -17,8 +17,8 @@ function createDestinationTemplate () {
   );
 }
 
-export default class DestinationTemplate {
-  getTemplate() {
+export default class DestinationView {
+  getTemplate () {
     return createDestinationTemplate();
   }
 

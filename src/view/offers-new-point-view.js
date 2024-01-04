@@ -56,7 +56,7 @@ function createOffersTemplate () {
   );
 }
 
-export default class OffersTempate {
+export default class OffersView {
   getTemplate() {
     return createOffersTemplate();
   }

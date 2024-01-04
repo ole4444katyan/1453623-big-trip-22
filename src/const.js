@@ -1,3 +1,8 @@
+const POINT_COUNT = 10;
+const PICTURE_COUNT = 5;
+const DESTINATION_COUNT = 6;
+const OFFER_COUNT = 3;
+
 const TYPES = [
   'Taxi',
   'Bus',
@@ -48,15 +53,27 @@ const DATE_FORMAT = {
   shortDate: 'D MMM',
   time: 'HH:mm',
   slashDate: 'DD/MM/YY HH:mm',
+  datetime: 'YYYY-MM-DD HH:mm'
+};
+
+const DURATION = {
+  hour: 2,
+  day: 1,
+  min: 20,
 };
 
 
 export {
+  POINT_COUNT,
+  PICTURE_COUNT,
+  DESTINATION_COUNT,
+  OFFER_COUNT,
   TYPES,
   DESCRIPTIONS,
   CITIES,
   OFFERS,
   PRICE,
   DATE_FORMAT,
+  DURATION,
 };
 
