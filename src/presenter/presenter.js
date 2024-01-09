@@ -8,7 +8,7 @@ import PointView from '../view/point-view.js';
 import EditingPointView from '../view/editing-point-view.js';
 
 // utils
-import {render} from '../render.js';
+import {render} from '../framework/render.js';
 import {getRandomArrayElement} from '../utils.js';
 
 
@@ -42,14 +42,14 @@ export default class Presenter {
       point: randomEditingPoint,
       pointDestinations: this.destinationModel.getById(randomEditingPoint.destination),
       pointOffers: this.offers.getByType(randomEditingPoint.type)
-    }), this.pointListComponent.getElement(), 'afterbegin');
+    }), this.pointListComponent.element, 'afterbegin');
 
     for (let i = 0; i < this.points.length; i++) {
       render(new PointView({
         point: this.points[i],
         pointDestinations: this.destinationModel.getById(this.points[i].destination),
         pointOffers: this.offers.getByType(this.points[i].type)
-      }), this.pointListComponent.getElement());
+      }), this.pointListComponent.element);
     }
   }
 }
