@@ -1,10 +1,13 @@
 export default class PointsModel {
+  #points = null;
+  #binder = null;
+
   constructor (binder) {
-    this.binder = binder;
-    this.points = this.binder.getPoints();
+    this.#binder = binder;
+    this.#points = this.#binder.getPoints();
   }
 
-  get () {
-    return this.points;
+  get allPoints() {
+    return this.#points;
   }
 }
