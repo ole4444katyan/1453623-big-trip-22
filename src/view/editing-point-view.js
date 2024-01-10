@@ -110,19 +110,32 @@ function createEditingPointTemplate ({point, pointDestinations, pointOffers}) {
 }
 
 export default class EditingPointView extends AbstractView {
+  #point = null;
+  #pointDestinations = null;
+  #pointOffers = null;
+  #onFormSubmit = null;
 
-  constructor({point, pointDestinations, pointOffers}) {
+  constructor({point, pointDestinations, pointOffers, onFormSubmit}) {
     super();
-    this.point = point;
-    this.pointDestinations = pointDestinations;
-    this.pointOffers = pointOffers;
+    this.#point = point;
+    this.#pointDestinations = pointDestinations;
+    this.#pointOffers = pointOffers;
+    this.#onFormSubmit = onFormSubmit;
+
+    this.element.querySelector('.event__rollup-btn')
+      .addEventListener('click', this.#editClickHandler);
   }
 
   get template() {
     return createEditingPointTemplate({
-      point: this.point,
-      pointDestinations: this.pointDestinations,
-      pointOffers: this.pointOffers
+      point: this.#point,
+      pointDestinations: this.#pointDestinations,
+      pointOffers: this.#pointOffers
     });
   }
+
+  #editClickHandler = (event) => {
+    event.preventDefault();
+    this.#onFormSubmit();
+  };
 }
