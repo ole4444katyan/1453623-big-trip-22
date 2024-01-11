@@ -1,4 +1,4 @@
-import {createElement} from '../render.js';
+import AbstractView from '../framework/view/abstract-view';
 
 function createOffersTemplate () {
 
@@ -56,20 +56,8 @@ function createOffersTemplate () {
   );
 }
 
-export default class OffersTempate {
+export default class OffersView extends AbstractView{
   getTemplate() {
     return createOffersTemplate();
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
   }
 }

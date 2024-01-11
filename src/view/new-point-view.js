@@ -1,6 +1,6 @@
-import {createElement} from '../render.js';
+import AbstractView from '../framework/view/abstract-view';
 
-function createNewEventTemplate () {
+function createNewPointTemplate () {
 
   return (
     `<li class="trip-events__item">
@@ -168,20 +168,8 @@ function createNewEventTemplate () {
   );
 }
 
-export default class NewEventTempate {
+export default class NewPointView extends AbstractView{
   getTemplate() {
-    return createNewEventTemplate();
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
+    return createNewPointTemplate();
   }
 }

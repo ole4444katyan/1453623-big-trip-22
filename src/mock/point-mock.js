@@ -1,67 +1,26 @@
-import {getRandomArrayElement, getRandomFromRange} from '../utils.js';
+/* eslint-disable camelcase */
+import {getRandomFromRange, createUniqueId} from '../utils.js';
 import {
-  TYPES,
-  CITIES,
-  OFFERS,
   PRICE,
-  DESCRIPTIONS,
+  POINT_COUNT,
 } from '../const.js';
+import {getDate} from './date-mock.js';
 
+const pointId = createUniqueId(1, POINT_COUNT);
 
-const mockPoints = [
-  {
-    date: new Date ('2023-01-01'),
-    type: getRandomArrayElement(TYPES),
-    place: getRandomArrayElement(CITIES),
-    startTime: new Date ('2023-01-04 07:00'),
-    endTime: new Date ('2023-01-04 07:10'),
-    price: getRandomFromRange(PRICE.min, PRICE.max),
-    offers: getRandomArrayElement(OFFERS),
-    offersPrice:  getRandomFromRange(PRICE.min, PRICE.max),
-    isFavorite: true,
-    description: getRandomArrayElement(DESCRIPTIONS),
-  },
-  {
-    date: new Date ('2023-01-02'),
-    type: getRandomArrayElement(TYPES),
-    place: getRandomArrayElement(CITIES),
-    startTime: new Date ('2023-01-04 07:00'),
-    endTime: new Date ('2023-01-05 07:30'),
-    price: getRandomFromRange(PRICE.min, PRICE.max),
-    offers: getRandomArrayElement(OFFERS),
-    offersPrice:  getRandomFromRange(PRICE.min, PRICE.max),
-    isFavorite: true,
-    description: getRandomArrayElement(DESCRIPTIONS),
-  },
-  {
-    date: new Date ('2023-01-03'),
-    type: getRandomArrayElement(TYPES),
-    place: getRandomArrayElement(CITIES),
-    startTime: new Date ('2023-01-04 07:00'),
-    endTime: new Date ('2023-01-04 08:30'),
-    price: getRandomFromRange(PRICE.min, PRICE.max),
-    offers: getRandomArrayElement(OFFERS),
-    offersPrice:  getRandomFromRange(PRICE.min, PRICE.max),
-    isFavorite: true,
-    description: getRandomArrayElement(DESCRIPTIONS),
-
-  },
-  {
-    date: new Date ('2023-01-04'),
-    type: getRandomArrayElement(TYPES),
-    place: getRandomArrayElement(CITIES),
-    startTime: new Date ('2023-01-04 07:00'),
-    endTime: new Date ('2023-01-04 07:30'),
-    price: getRandomFromRange(PRICE.min, PRICE.max),
-    offers: getRandomArrayElement(OFFERS),
-    offersPrice:  getRandomFromRange(PRICE.min, PRICE.max),
-    isFavorite: true,
-    description: getRandomArrayElement(DESCRIPTIONS),
-  },
-];
-
-function getRandomPoint () {
-  return getRandomArrayElement(mockPoints);
+function generatePointMock (type, destinationId, offerIds) {
+  return {
+    id: pointId(),
+    base_price: getRandomFromRange(PRICE.min, PRICE.max),
+    date_from: getDate({dateTo: false}),
+    date_to: getDate({dateTo: true}),
+    destination: destinationId,
+    is_favorite: Boolean(getRandomFromRange(0, 1)),
+    offers: [
+      offerIds
+    ],
+    type,
+  };
 }
 
-export {getRandomPoint};
+export {generatePointMock};
