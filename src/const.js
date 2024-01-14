@@ -62,6 +62,13 @@ const DURATION = {
   min: 20,
 };
 
+const FilterTypes = {
+  EVERYTHING: 'Everything',
+  FUTURE: 'Future',
+  PRESENT: 'Present',
+  PAST: 'Past'
+};
+
 
 export {
   POINT_COUNT,
@@ -75,5 +82,6 @@ export {
   PRICE,
   DATE_FORMAT,
   DURATION,
+  FilterTypes
 };
 

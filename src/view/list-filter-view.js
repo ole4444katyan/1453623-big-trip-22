@@ -1,31 +1,51 @@
 import AbstractView from '../framework/view/abstract-view.js';
+import {FilterTypes} from '../const.js';
 
-function createFilterTemplate () {
+function createFilterItemsTemplate (points, filters, currentFilterType) {
+  return filters.map(({type, getPoints}) => {
+    const count = getPoints(points).length;
+    return (`
+    <div class="trip-filters__filter">
+      <input id="filter-${type.toLowerCase()}"
+      class="trip-filters__filter-input
+      visually-hidden"
+      type="radio"
+      name="trip-filter"
+      value="${type.toLowerCase()}"
+      ${count ? '' : 'disabled'}
+      ${type === currentFilterType ? 'checked' : ''}>
+
+      <label
+      class="trip-filters__filter-label"
+      for="filter-${type.toLowerCase()}">${type}
+      </label>
+    </div>
+
+    </div>`);
+  }).join('');
+}
+
+
+function createFilterTemplate (points, filters, currentFilterType = FilterTypes.EVERYTHING) {
   return (
     `<form class="trip-filters" action="#" method="get">
-      <div class="trip-filters__filter">
-        <input id="filter-everything" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="everything">
-        <label class="trip-filters__filter-label" for="filter-everything">Everything</label>
-      </div>
-      <div class="trip-filters__filter">
-        <input id="filter-future" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="future">
-        <label class="trip-filters__filter-label" for="filter-future">Future</label>
-      </div>
-      <div class="trip-filters__filter">
-        <input id="filter-present" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="present">
-        <label class="trip-filters__filter-label" for="filter-present">Present</label>
-      </div>
-      <div class="trip-filters__filter">
-        <input id="filter-past" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="past" checked>
-        <label class="trip-filters__filter-label" for="filter-past">Past</label>
-      </div>
+    ${createFilterItemsTemplate(points, filters, currentFilterType)}
       <button class="visually-hidden" type="submit">Accept filter</button>
     </form>`
   );
 }
 
 export default class FilterView extends AbstractView{
+  #points = null;
+  #filters = null;
+
+  constructor (points, filters) {
+    super();
+    this.#points = points;
+    this.#filters = filters;
+  }
+
   get template() {
-    return createFilterTemplate();
+    return createFilterTemplate(this.#points, this.#filters);
   }
 }
