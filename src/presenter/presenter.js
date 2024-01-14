@@ -10,6 +10,9 @@ import EditingPointView from '../view/editing-point-view.js';
 // utils
 import {render, replace} from '../framework/render.js';
 
+// mocks
+import {filteredPoints} from '../mock/filter-mock.js';
+
 
 const siteHeaderElement = document.querySelector('.page-header');
 const siteFiltersElement = siteHeaderElement.querySelector('.trip-main__trip-controls');
@@ -33,7 +36,9 @@ export default class Presenter {
 
   init() {
 
-    render(new FilterView(), siteFiltersElement);
+    const filters = filteredPoints();
+
+    render(new FilterView(this.#points, filters), siteFiltersElement);
     render(new InfoView(), siteInfoElement, 'afterbegin');
 
     render(new SortView, this.#pointsContainer);
