@@ -1,29 +1,38 @@
 import PointView from '../view/point-view.js';
 import EditingPointView from '../view/editing-point-view.js';
+import NoPointMessageView from '../view/no-point-message-view.js';
+
+// import {POINT_COUNT_PER_STEP} from '../const.js';
 
 
 import {render, replace} from '../framework/render.js';
 
 
 export default class PointPresenter {
-  #pointListComponent = null;
   #points = null;
+  #pointListComponent = null;
   #destinationModel = null;
   #offers = null;
+  #pointsContainer = null;
 
-  constructor({pointListComponent, points, destinationModel, offers}) {
-    this.#pointListComponent = pointListComponent;
+  #noPointComponent = new NoPointMessageView();
+
+  constructor({points, pointListComponent, destinationModel, offers, pointsContainer}) {
     this.#points = points;
+    this.#pointListComponent = pointListComponent;
     this.#destinationModel = destinationModel;
     this.#offers = offers;
+    this.#pointsContainer = pointsContainer;
   }
 
-  init(point) {
-    return this.#renderPoint({
-      point: point,
-      pointDestinations: this.#destinationModel.getById(point.destination),
-      pointOffers: this.#offers.getByType(point.type)
-    });
+  init () {
+    if (this.#points.every((point) => !point)) {
+      this.#renderNoPoints();
+      return;
+    }
+
+    //this.#renderSort();
+    this.#renderPoints();
   }
 
   #renderPoint ({point, pointDestinations, pointOffers}) {
@@ -66,4 +75,19 @@ export default class PointPresenter {
     render(pointComponent, this.#pointListComponent.element);
   }
 
+  #renderPoints () {
+    this.#points.forEach((point) => this.#renderPoint(({
+      point: point,
+      pointDestinations: this.#destinationModel.getById(point.destination),
+      pointOffers: this.#offers.getByType(point.type)
+    })));
+  }
+
+  #renderNoPoints () {
+    render(this.#noPointComponent, this.#pointsContainer, 'afterbegin');
+  }
+
+  /* #renderSort () {
+  }
+  */
 }

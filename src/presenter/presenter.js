@@ -1,9 +1,10 @@
 // views
 import InfoView from '../view/info-view.js';
-import FilterView from '../view/list-filter-view.js';
+import FilterView from '../view/filter-view.js';
+import NoPointMessageView from '../view/no-point-message-view.js';
 
 import ListPointsView from '../view/list-points-view.js';
-import SortView from '../view/list-sort-view.js';
+import SortView from '../view/sort-view.js';
 
 // utils
 import {render} from '../framework/render.js';
@@ -19,6 +20,7 @@ const siteInfoElement = siteHeaderElement.querySelector('.trip-main');
 
 export default class Presenter {
   #pointListComponent = new ListPointsView();
+  #noPointComponent = new NoPointMessageView();
 
   #pointsContainer = null;
   #points = null;
@@ -39,31 +41,30 @@ export default class Presenter {
 
     render(new FilterView(this.#points, filters), siteFiltersElement);
     render(new InfoView(), siteInfoElement, 'afterbegin');
+    render(new SortView(), this.#pointsContainer);
 
-    render(new SortView, this.#pointsContainer);
-    render(this.#pointListComponent, this.#pointsContainer);
+    this.#renderPointBoard();
 
-
-    this.#renderPoint();
-
-    this.#points.forEach((point) => {
-      this.#renderPoint({
-        point: point,
-        pointDestinations: this.#destinationModel.getById(point.destination),
-        pointOffers: this.#offers.getByType(point.type)
-      });
-    });
+    //this.#points.forEach((point) => {
+    //  this.#renderPoint({
+    //    point: point,
+    //    pointDestinations: this.#destinationModel.getById(point.destination),
+    //    pointOffers: this.#offers.getByType(point.type)
+    //  });
+    //});
   }
 
-  #renderPoint () {
+  #renderPointBoard () {
+    render(this.#pointListComponent, this.#pointsContainer);
+
     const pointPresenter = new PointPresenter({
-      pointListComponent: this.#pointListComponent,
       points: this.#points,
+      pointListComponent: this.#pointListComponent,
       destinationModel: this.#destinationModel,
       offers: this.#offers,
+      pointsContainer: this.#pointsContainer,
     });
 
-
-    this.#points.forEach((point) => pointPresenter.init(point));
+    pointPresenter.init();
   }
 }
