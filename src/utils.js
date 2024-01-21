@@ -70,6 +70,9 @@ const filterFunctions = {
 };
 
 
+const updateItem = (itemsArray, update) => itemsArray.map(
+  (item) => item.id === update.id ? update : item);
+
 export {
   getRandomArrayElement,
   getRandomFromRange,
@@ -81,4 +84,5 @@ export {
   datetimeHumanize,
   slashDateHumanize,
   filterFunctions,
+  updateItem,
 };
