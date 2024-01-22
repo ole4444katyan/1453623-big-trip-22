@@ -1,5 +1,6 @@
 import PointView from '../view/point-view.js';
 import EditingPointView from '../view/editing-point-view.js';
+import {MODE} from '../const.js';
 
 import {render, replace, remove} from '../framework/render.js';
 
@@ -11,16 +12,19 @@ export default class PointPresenter {
   #offers = null;
   #pointsContainer = null;
   #handleDataChange = null;
+  #handleModeChange = null;
+  #mode = MODE.default;
 
 
   #pointComponent = null;
   #pointEditComponent = null;
 
-  constructor({pointsContainer, destinationModel, offers, onDataChange,}) {
+  constructor({pointsContainer, destinationModel, offers, onDataChange, onModeChange}) {
     this.#pointsContainer = pointsContainer;
     this.#destinationModel = destinationModel;
     this.#offers = offers;
     this.#handleDataChange = onDataChange;
+    this.#handleModeChange = onModeChange;
   }
 
   init(point) {
@@ -41,6 +45,7 @@ export default class PointPresenter {
       point: this.#point,
       pointDestinations: this.#destinationModel.getById(this.#point.destination),
       pointOffers: this.#offers.getByType(this.#point.type),
+      onResetClick: this.#replaceFormToPoint,
       onFormSubmit: this.#handleFormSubmit,
     });
 
@@ -51,17 +56,23 @@ export default class PointPresenter {
 
     // Проверка на наличие в DOM необходима,
     // чтобы не пытаться заменить то, что не было отрисовано
-    if (this.#pointsContainer.contains(prevPointComponent.element)) {
+    if (this.#mode === MODE.default) {
       replace(this.#pointComponent, prevPointComponent);
     }
 
-    if (this.#pointsContainer.contains(prevPointEditComponent.element)) {
+    if (this.#mode === MODE.editing) {
       replace(this.#pointEditComponent, prevPointEditComponent);
     }
 
     remove(prevPointComponent);
     remove(prevPointEditComponent);
 
+  }
+
+  resetView() {
+    if(this.#mode !== MODE.default) {
+      this.#replaceFormToPoint();
+    }
   }
 
   destroy() {
@@ -77,21 +88,25 @@ export default class PointPresenter {
     }
   };
 
-  #replacePointToForm() {
+  #replacePointToForm = () => {
     replace(this.#pointEditComponent, this.#pointComponent);
     document.addEventListener('keydown', this.#escKeyDownHandler);
+    this.#handleModeChange();
+    this.#mode = MODE.editing;
   }
 
-  #replaceFormToPoint() {
+  #replaceFormToPoint = () => {
     replace(this.#pointComponent, this.#pointEditComponent);
     document.addEventListener('keydown', this.#escKeyDownHandler);
-  }
+    this.#mode = MODE.default;
+  };
 
   #handleEditClick = () => {
     this.#replacePointToForm();
   };
 
-  #handleFormSubmit = () => {
+  #handleFormSubmit = (point) => {
+    this.#handleDataChange(point);
     this.#replaceFormToPoint();
   };
 

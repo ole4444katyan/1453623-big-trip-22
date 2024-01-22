@@ -48,6 +48,10 @@ export default class Presenter {
     // console.log('init');
   };
 
+  #handleModeChange = () => {
+    this.#pointPresenters.forEach((presenter) => presenter.resetView());
+  };
+
   #renderPointBoard() {
     this.#renderFilters();
     this.#renderInfo();
@@ -81,6 +85,7 @@ export default class Presenter {
       destinationModel: this.#destinationModel,
       offers: this.#offers,
       onDataChange: this.#handlePointsChange,
+      onModeChange: this.#handleModeChange,
     });
 
     pointPresenter.init(point);
@@ -97,6 +102,4 @@ export default class Presenter {
       render(this.#noPointComponent, this.#pointsContainer, 'afterbegin');
     }
   }
-
-
 }

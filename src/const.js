@@ -77,6 +77,11 @@ const SortTypes = {
   OFFERS: 'offers'
 };
 
+const MODE = {
+  default: 'default',
+  editing: 'editing',
+};
+
 export {
   POINT_COUNT,
   PICTURE_COUNT,
@@ -91,5 +96,6 @@ export {
   DURATION,
   FilterTypes,
   SortTypes,
+  MODE,
 };
 
