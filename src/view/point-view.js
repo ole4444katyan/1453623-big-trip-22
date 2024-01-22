@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 import {
   durationEvent,
   shortDateHumanize,
@@ -21,33 +20,33 @@ function createOffersTemplate (offers) {
 }
 
 function createPointTemplate ({point, pointDestinations, pointOffers}) {
-  const {base_price, date_from, date_to, is_favorite, type } = point;
+  const {basePrice, dateFrom, dateTo, isFavorite, type } = point;
   const {name} = pointDestinations;
 
   return (
     `<li class="trip-events__item">
       <div class="event">
-        <time class="event__date" datetime="${datetimeHumanize(date_from)}">${shortDateHumanize(date_from)}</time>
+        <time class="event__date" datetime="${datetimeHumanize(dateFrom)}">${shortDateHumanize(dateFrom)}</time>
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
         </div>
         <h3 class="event__title">${type} ${name}</h3>
         <div class="event__schedule">
           <p class="event__time">
-            <time class="event__start-time" datetime="${datetimeHumanize(date_from)}">${timeHumanize(date_from)}</time>
+            <time class="event__start-time" datetime="${datetimeHumanize(dateFrom)}">${timeHumanize(dateFrom)}</time>
             &mdash;
-            <time class="event__end-time" datetime="${datetimeHumanize(date_to)}">${timeHumanize(date_to)}</time>
+            <time class="event__end-time" datetime="${datetimeHumanize(dateTo)}">${timeHumanize(dateTo)}</time>
           </p>
-          <p class="event__duration">${durationEvent(date_from, date_to)}</p>
+          <p class="event__duration">${durationEvent(dateFrom, dateTo)}</p>
         </div>
         <p class="event__price">
-          &euro;&nbsp;<span class="event__price-value">${base_price}</span>
+          &euro;&nbsp;<span class="event__price-value">${basePrice}</span>
         </p>
         <h4 class="visually-hidden">Offers:</h4>
 
         ${pointOffers ? createOffersTemplate(pointOffers) : ''}
 
-        <button class="event__favorite-btn ${is_favorite ? 'event__favorite-btn--active' : ''}" type="button">
+        <button class="event__favorite-btn ${isFavorite ? 'event__favorite-btn--active' : ''}" type="button">
           <span class="visually-hidden">Add to favorite</span>
           <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
             <path d="M14 21l-8.22899 4.3262 1.57159-9.1631L.685209 9.67376 9.8855 8.33688 14 0l4.1145 8.33688 9.2003 1.33688-6.6574 6.48934 1.5716 9.1631L14 21z"/>
@@ -66,16 +65,20 @@ export default class PointView extends AbstractView {
   #pointDestinations = null;
   #pointOffers = null;
   #onEditClick = null;
+  #onFavoriteClick = null;
 
-  constructor({point, pointDestinations, pointOffers, onEditClick}) {
+  constructor({point, pointDestinations, pointOffers, onEditClick, onFavoriteClick}) {
     super();
     this.#point = point;
     this.#pointDestinations = pointDestinations;
     this.#pointOffers = pointOffers;
     this.#onEditClick = onEditClick;
+    this.#onFavoriteClick = onFavoriteClick;
 
     this.element.querySelector('.event__rollup-btn')
       .addEventListener('click', this.#editClickHandler);
+    this.element.querySelector('.event__favorite-btn')
+      .addEventListener('click', this.#favoriteClickHandler);
   }
 
   get template() {
@@ -89,5 +92,10 @@ export default class PointView extends AbstractView {
   #editClickHandler = (event) => {
     event.preventDefault();
     this.#onEditClick();
+  };
+
+  #favoriteClickHandler = (event) => {
+    event.preventDefault();
+    this.#onFavoriteClick();
   };
 }

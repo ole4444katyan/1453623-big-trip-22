@@ -1,4 +1,4 @@
-const POINT_COUNT = 10;
+const POINT_COUNT = 30;
 const PICTURE_COUNT = 5;
 const DESTINATION_COUNT = 6;
 const OFFER_COUNT = 3;
@@ -69,6 +69,18 @@ const FilterTypes = {
   PAST: 'Past'
 };
 
+const SortTypes = {
+  DAY: 'day',
+  EVENT: 'event',
+  TIME: 'time',
+  PRICE: 'price',
+  OFFERS: 'offers'
+};
+
+const MODE = {
+  default: 'default',
+  editing: 'editing',
+};
 
 export {
   POINT_COUNT,
@@ -82,6 +94,8 @@ export {
   PRICE,
   DATE_FORMAT,
   DURATION,
-  FilterTypes
+  FilterTypes,
+  SortTypes,
+  MODE,
 };
 

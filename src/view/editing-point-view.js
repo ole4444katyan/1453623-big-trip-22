@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 import AbstractView from '../framework/view/abstract-view.js';
 import {
   slashDateHumanize,
@@ -42,7 +41,7 @@ function createOffersTemplate (offers) {
 }
 
 function createEditingPointTemplate ({point, pointDestinations, pointOffers}) {
-  const {base_price, date_from, date_to, type} = point;
+  const {basePrice, dateFrom, dateTo, type} = point;
   const {name, description} = pointDestinations;
 
 
@@ -74,17 +73,17 @@ function createEditingPointTemplate ({point, pointDestinations, pointOffers}) {
           </div>
           <div class="event__field-group  event__field-group--time">
             <label class="visually-hidden" for="event-start-time-1">From</label>
-            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${slashDateHumanize(date_from)}">
+            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${slashDateHumanize(dateFrom)}">
             &mdash;
             <label class="visually-hidden" for="event-end-time-1">To</label>
-            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${slashDateHumanize(date_to)}">
+            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${slashDateHumanize(dateTo)}">
           </div>
           <div class="event__field-group  event__field-group--price">
             <label class="event__label" for="event-price-1">
               <span class="visually-hidden">Price</span>
               &euro;
             </label>
-            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${base_price}">
+            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
           </div>
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
           <button class="event__reset-btn" type="reset">Delete</button>
@@ -113,17 +112,23 @@ export default class EditingPointView extends AbstractView {
   #point = null;
   #pointDestinations = null;
   #pointOffers = null;
+  #onResetClick = null;
   #onFormSubmit = null;
 
-  constructor({point, pointDestinations, pointOffers, onFormSubmit}) {
+  constructor({point, pointDestinations, pointOffers, onResetClick, onFormSubmit}) {
     super();
     this.#point = point;
     this.#pointDestinations = pointDestinations;
     this.#pointOffers = pointOffers;
+    this.#onResetClick = onResetClick;
     this.#onFormSubmit = onFormSubmit;
 
     this.element.querySelector('.event__rollup-btn')
       .addEventListener('click', this.#editClickHandler);
+
+    this.element.querySelector('form')
+      .addEventListener('submit', this.#pointEditSubmitHandler);
+
   }
 
   get template() {
@@ -136,6 +141,12 @@ export default class EditingPointView extends AbstractView {
 
   #editClickHandler = (event) => {
     event.preventDefault();
-    this.#onFormSubmit();
+    this.#onResetClick();
+    // this.#onFormSubmit();
+  };
+
+  #pointEditSubmitHandler = (event) => {
+    event.preventDefault();
+    this.#onFormSubmit(this.#point);
   };
 }

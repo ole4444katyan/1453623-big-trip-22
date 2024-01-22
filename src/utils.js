@@ -64,11 +64,14 @@ function createUniqueId (min, max) {
 
 const filterFunctions = {
   [FilterTypes.EVERYTHING]: (points) => [...points],
-  [FilterTypes.PRESENT]: (points) => points.filter((point) => dayjs().isBefore(dayjs(point.date_to)) && dayjs().isAfter(dayjs(point.date_from))),
-  [FilterTypes.PAST]: (points) => points.filter((point) => dayjs().isAfter(dayjs(point.date_to))),
-  [FilterTypes.FUTURE]: (points) => points.filter((point) => dayjs().isBefore(dayjs(point.date_from))),
+  [FilterTypes.PRESENT]: (points) => points.filter((point) => dayjs().isBefore(dayjs(point.dateTo)) && dayjs().isAfter(dayjs(point.dateFrom))),
+  [FilterTypes.PAST]: (points) => points.filter((point) => dayjs().isAfter(dayjs(point.dateTo))),
+  [FilterTypes.FUTURE]: (points) => points.filter((point) => dayjs().isBefore(dayjs(point.dateFrom))),
 };
 
+
+const updateItem = (itemsArray, update) => itemsArray.map(
+  (item) => item.id === update.id ? update : item);
 
 export {
   getRandomArrayElement,
@@ -81,4 +84,5 @@ export {
   datetimeHumanize,
   slashDateHumanize,
   filterFunctions,
+  updateItem,
 };
