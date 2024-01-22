@@ -8,7 +8,14 @@ import SortView from '../view/sort-view.js';
 
 // utils
 import {render} from '../framework/render.js';
-import {updateItem} from '../utils.js';
+import {
+  updateItem,
+  sortPointByTime,
+  sortPointByPrice,
+  sortPointByDay
+} from '../utils.js';
+
+import {SortTypes} from '../const.js';
 
 // mocks
 import {filteredPoints} from '../mock/filter-mock.js';
@@ -22,6 +29,10 @@ const siteInfoElement = siteHeaderElement.querySelector('.trip-main');
 export default class Presenter {
   #pointListComponent = new ListPointsView();
   #noPointComponent = new NoPointMessageView();
+
+  #sortComponent = null;
+  #currentSortType = SortTypes.DAY;
+  #sourcedPoints = [];
 
   #pointsContainer = null;
   #points = null;
@@ -76,8 +87,39 @@ export default class Presenter {
   }
 
   #renderSort() {
-    render(new SortView(), this.#pointsContainer);
+    this.#sortComponent = new SortView({
+      onSortTypeChange: this.#handleSortTypeChange
+    });
+    render(this.#sortComponent, this.#pointsContainer);
   }
+
+  #sortPoints(type) {
+    switch (type) {
+      case SortTypes.TIME:
+        this.#points.sort(sortPointByTime);
+        break;
+      case SortTypes.PRICE:
+        this.#points.sort(sortPointByPrice);
+        break;
+      case SortTypes.DAY:
+        this.#points.sort(sortPointByDay);
+        break;
+      default:
+        this.#points = [...this.#sourcedPoints];
+    }
+
+    this.#currentSortType = type;
+  }
+
+  #handleSortTypeChange = (sortType) => {
+    if (this.#currentSortType === sortType) {
+      return;
+    }
+
+    this.#sortPoints(sortType);
+    this.#clearPoints();
+    this.#renderPoints();
+  };
 
   #renderPoint (point) {
     const pointPresenter = new PointPresenter({
@@ -101,5 +143,10 @@ export default class Presenter {
     if (this.#points.length === 0) {
       render(this.#noPointComponent, this.#pointsContainer, 'afterbegin');
     }
+  }
+
+  #clearPoints() {
+    this.#pointPresenters.forEach((presenter) => presenter.destroy());
+    this.#pointPresenters.clear();
   }
 }

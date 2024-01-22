@@ -77,6 +77,8 @@ const SortTypes = {
   OFFERS: 'offers'
 };
 
+const sortValues = Object.values(SortTypes);
+
 const MODE = {
   default: 'default',
   editing: 'editing',
@@ -96,6 +98,7 @@ export {
   DURATION,
   FilterTypes,
   SortTypes,
+  sortValues,
   MODE,
 };
 
