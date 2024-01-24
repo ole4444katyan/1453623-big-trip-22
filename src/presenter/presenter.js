@@ -123,7 +123,7 @@ export default class Presenter {
 
   #renderPoint (point) {
     const pointPresenter = new PointPresenter({
-      pointsContainer: this.#pointsContainer,
+      pointsContainer: this.#pointListComponent.element,
       destinationModel: this.#destinationModel,
       offers: this.#offers,
       onDataChange: this.#handlePointsChange,
@@ -141,7 +141,7 @@ export default class Presenter {
 
   #renderNoPoints () {
     if (this.#points.length === 0) {
-      render(this.#noPointComponent, this.#pointsContainer, 'afterbegin');
+      render(this.#noPointComponent, this.#pointListComponent.element, 'afterbegin');
     }
   }
 
