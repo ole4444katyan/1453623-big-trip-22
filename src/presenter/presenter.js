@@ -20,7 +20,7 @@ import {SortTypes} from '../const.js';
 // mocks
 import {filteredPoints} from '../mock/filter-mock.js';
 
-import PointPresenter from './task-presenter.js';
+import PointPresenter from './point-presenter.js';
 
 const siteHeaderElement = document.querySelector('.page-header');
 const siteFiltersElement = siteHeaderElement.querySelector('.trip-main__trip-controls');
@@ -54,9 +54,9 @@ export default class Presenter {
   }
 
   #handlePointsChange = (updatedPoint) => {
+    // console.log(this.#points, updatedPoint);
     this.#points = updateItem(this.#points, updatedPoint);
     this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
-    // console.log('init');
   };
 
   #handleModeChange = () => {
@@ -123,7 +123,7 @@ export default class Presenter {
 
   #renderPoint (point) {
     const pointPresenter = new PointPresenter({
-      pointsContainer: this.#pointsContainer,
+      pointsContainer: this.#pointListComponent.element,
       destinationModel: this.#destinationModel,
       offers: this.#offers,
       onDataChange: this.#handlePointsChange,
@@ -141,7 +141,7 @@ export default class Presenter {
 
   #renderNoPoints () {
     if (this.#points.length === 0) {
-      render(this.#noPointComponent, this.#pointsContainer, 'afterbegin');
+      render(this.#noPointComponent, this.#pointListComponent.element, 'afterbegin');
     }
   }
 

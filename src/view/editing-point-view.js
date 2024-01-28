@@ -1,4 +1,4 @@
-import AbstractView from '../framework/view/abstract-view.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import {
   slashDateHumanize,
 } from '../utils.js';
@@ -24,26 +24,37 @@ function createTypeTemplate (types, currentType) {
   }`);
 }
 
-function createOffersTemplate (offers) {
+function createOffersTemplate (offers, state) {
   return (`${
-    offers.map(
-      (offer, index) => `<div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-${index + 1}" type="checkbox" name="event-offer-luggage"
-      ${index === 0 ? 'checked' : ''}>
-      <label class="event__offer-label" for="event-offer-luggage-1">
+    offers.map((offer, index) => {
+      const checked = state.offers.includes(offer.id) ? 'checked' : '';
+      return (`
+      <div class="event__offer-selector">
+      <input
+        class="event__offer-checkbox
+        visually-hidden"
+        id="event-offer-luggage-${index + 1}"
+        type="checkbox"
+        name="event-offer-luggage"
+        checked
+        data-offer-id=${offer.id} ${checked}
+      >
+      <label
+        class="event__offer-label"
+        for="event-offer-luggage-${index + 1}"
+      >
         <span class="event__offer-title">${offer.title}</span>
         &plus;&euro;&nbsp;
         <span class="event__offer-price">${offer.price}</span>
       </label>
-    </div>`
-    ).join('')
+    </div>`);
+    }).join('')
   }`);
 }
 
-function createEditingPointTemplate ({point, pointDestinations, pointOffers}) {
-  const {basePrice, dateFrom, dateTo, type} = point;
-  const {name, description} = pointDestinations;
-
+function createEditingPointTemplate ({state, destinations, pointOffers}) {
+  const {basePrice, dateFrom, dateTo, type} = state;
+  const {name, description} = destinations;
 
   return (
     `<li class="trip-events__item">
@@ -95,7 +106,7 @@ function createEditingPointTemplate ({point, pointDestinations, pointOffers}) {
           <section class="event__section  event__section--offers">
             <h3 class="event__section-title  event__section-title--offers">Offers</h3>
             <div class="event__available-offers">
-            ${pointOffers ? createOffersTemplate(pointOffers) : ''}
+            ${pointOffers ? createOffersTemplate(pointOffers, state) : ''}
             </div>
           </section>
           <section class="event__section  event__section--destination">
@@ -108,18 +119,23 @@ function createEditingPointTemplate ({point, pointDestinations, pointOffers}) {
   );
 }
 
-export default class EditingPointView extends AbstractView {
+export default class EditingPointView extends AbstractStatefulView {
   #point = null;
-  #pointDestinations = null;
+  #destinations = null;
+  #allDestinations = null;
   #pointOffers = null;
   #onResetClick = null;
   #onFormSubmit = null;
 
-  constructor({point, pointDestinations, pointOffers, onResetClick, onFormSubmit}) {
+  constructor({point, pointDestinations, destinations, pointOffers, onResetClick, onFormSubmit}) {
     super();
-    this.#point = point;
-    this.#pointDestinations = pointDestinations;
+    this._state = point;
+    this._setState(EditingPointView.parsePointToState({point}));
+
+    this.#destinations = pointDestinations;
+    this.#allDestinations = destinations;
     this.#pointOffers = pointOffers;
+    this._restoreHandlers();
     this.#onResetClick = onResetClick;
     this.#onFormSubmit = onFormSubmit;
 
@@ -133,8 +149,8 @@ export default class EditingPointView extends AbstractView {
 
   get template() {
     return createEditingPointTemplate({
-      point: this.#point,
-      pointDestinations: this.#pointDestinations,
+      state: this._state,
+      destinations: this.#destinations,
       pointOffers: this.#pointOffers
     });
   }
@@ -142,11 +158,76 @@ export default class EditingPointView extends AbstractView {
   #editClickHandler = (event) => {
     event.preventDefault();
     this.#onResetClick();
-    // this.#onFormSubmit();
   };
 
   #pointEditSubmitHandler = (event) => {
     event.preventDefault();
-    this.#onFormSubmit(this.#point);
+    this.#onFormSubmit(EditingPointView.parseStateToPoint(this._state));
   };
+
+  _restoreHandlers () {
+
+    this.element.querySelector('.event__rollup-btn')
+      .addEventListener('click', this.#editClickHandler);
+
+    this.element.querySelector('form')
+      .addEventListener('submit', this.#pointEditSubmitHandler);
+
+    this.element.querySelector('.event__type-group')
+      .addEventListener('change', this.#typeChangeHandler);
+
+    this.element.querySelector('.event__input--destination')
+      .addEventListener('change', this.#destinationChangeHandler);
+
+    this.element.querySelector('.event__available-offers')
+      .addEventListener('change', this.#offerChangeHandler);
+
+    this.element.querySelector('.event__input--price').
+      addEventListener('change', this.#priceChangeHandler);
+  }
+
+  #typeChangeHandler = (evt) => {
+    this.updateElement({
+      point: {
+        ...this._state.point,
+        type: evt.target.value,
+        offers: []
+      }
+    });
+  };
+
+  #destinationChangeHandler = (evt) => {
+
+    const selectedDestination = this.#allDestinations.find((destination) => destination.name === evt.target.value);
+    const selectedDestinationId = (selectedDestination) ? selectedDestination.id : this._state.point.destination;
+
+    this.updateElement({
+      point: {
+        ...this._state.point,
+        destination: selectedDestinationId
+      }
+    });
+  };
+
+  #offerChangeHandler = () => {
+    const checkedBoxes = Array.from(this.element.querySelectorAll('.event__offer-checkbox:checked'));
+    this._setState({
+      point: {
+        ...this._state.point,
+        offers: Array.from(checkedBoxes.map((element) => (Number(element.dataset.offerId))))
+      }
+    });
+  };
+
+  #priceChangeHandler = (evt) => {
+    this._setState({
+      point: {
+        ...this._state.point,
+        basePrice: evt.target.value
+      }
+    });
+  };
+
+  static parsePointToState = ({point}) => ({point});
+  static parseStateToPoint = (state) => state.point;
 }
