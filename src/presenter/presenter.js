@@ -37,7 +37,7 @@ export default class Presenter {
   #pointsContainer = null;
   #points = null;
   #destinationModel = null;
-  #offers = null;
+  #offersModel = null;
 
   #pointPresenters = new Map();
 
@@ -45,8 +45,7 @@ export default class Presenter {
     this.#pointsContainer = pointsContainer;
     this.#points = pointsModel.allPoints;
     this.#destinationModel = destinationsModel;
-    // this.destinations = destinationsModel.get();
-    this.#offers = offersModel;
+    this.#offersModel = offersModel;
   }
 
   init() {
@@ -54,7 +53,6 @@ export default class Presenter {
   }
 
   #handlePointsChange = (updatedPoint) => {
-    // console.log(this.#points, updatedPoint);
     this.#points = updateItem(this.#points, updatedPoint);
     this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
   };
@@ -125,7 +123,7 @@ export default class Presenter {
     const pointPresenter = new PointPresenter({
       pointsContainer: this.#pointListComponent.element,
       destinationModel: this.#destinationModel,
-      offers: this.#offers,
+      offersModel: this.#offersModel,
       onDataChange: this.#handlePointsChange,
       onModeChange: this.#handleModeChange,
     });

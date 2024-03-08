@@ -15,9 +15,7 @@ function generatePointMock (type, destinationId, offerIds) {
     dateTo: getDate({dateTo: true}),
     destination: destinationId,
     isFavorite: Boolean(getRandomFromRange(0, 1)),
-    offers: [
-      offerIds
-    ],
+    offers: offerIds,
     type,
   };
 }
