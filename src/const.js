@@ -84,6 +84,11 @@ const MODE = {
   editing: 'editing',
 };
 
+const EDIT_TYPE = {
+  EDITING: 'editing',
+  CREATING: 'creating',
+};
+
 export {
   POINT_COUNT,
   PICTURE_COUNT,
@@ -100,5 +105,6 @@ export {
   SortTypes,
   sortValues,
   MODE,
+  EDIT_TYPE,
 };
 
