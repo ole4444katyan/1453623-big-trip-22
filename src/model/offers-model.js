@@ -7,7 +7,7 @@ export default class OffersModel {
     this.#offers = this.#binder.getOffers();
   }
 
-  get allOffers() {
+  get() {
     return this.#offers;
   }
 
